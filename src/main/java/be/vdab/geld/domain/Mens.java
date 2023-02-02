@@ -1,11 +1,13 @@
 package be.vdab.geld.domain;
 
+import be.vdab.geld.exceptions.OnvoldoendeGeldException;
+
 import java.math.BigDecimal;
 
 public class Mens {
     private final long id;
     private final String naam;
-    private final BigDecimal geld;
+    private BigDecimal geld;
 
     public Mens(long id, String naam, BigDecimal geld) {
         this.id = id;
@@ -23,5 +25,13 @@ public class Mens {
 
     public BigDecimal getGeld() {
         return geld;
+    }
+
+    public void schenk(Mens aanMens, BigDecimal bedrag) {
+        if (geld.compareTo(bedrag) < 0) {
+            throw new OnvoldoendeGeldException();
+        }
+        geld = geld.subtract(bedrag);
+        aanMens.geld = aanMens.geld.add(bedrag);
     }
 }
