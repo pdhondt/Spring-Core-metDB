@@ -1,6 +1,7 @@
 package be.vdab.geld.repositories;
 
 import be.vdab.geld.domain.Mens;
+import be.vdab.geld.dto.SchenkStatistiekPerMens;
 import be.vdab.geld.exceptions.MensNietGevondenException;
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -39,7 +40,7 @@ public class MensRepository {
     public void update(Mens mens) {
         var sql = """
                 update mensen
-                set naam = ?, geld = ?                
+                set naam = ?, geld = ?
                 where id = ?
                 """;
         if (template.update(sql,
@@ -109,5 +110,18 @@ public class MensRepository {
             } catch (IncorrectResultSizeDataAccessException ex) {
             return Optional.empty();
         }
+    }
+    public List<SchenkStatistiekPerMens> findSchenkStatistiekPerMens() {
+        var sql = """
+                select mensen.id, naam, count(*) as aantal, sum(bedrag) as totaal
+                from mensen inner join schenkingen
+                on mensen.id = schenkingen.vanMensId
+                group by mensen.id
+                order by mensen.id
+                """;
+        RowMapper<SchenkStatistiekPerMens> mapper = (rs, rowNum) ->
+                new SchenkStatistiekPerMens(rs.getLong("id"), rs.getString("naam"),
+                        rs.getInt("aantal"), rs.getBigDecimal("totaal"));
+        return template.query(sql, mapper);
     }
 }

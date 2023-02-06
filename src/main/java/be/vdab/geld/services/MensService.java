@@ -1,6 +1,7 @@
 package be.vdab.geld.services;
 
 import be.vdab.geld.domain.Mens;
+import be.vdab.geld.dto.SchenkStatistiekPerMens;
 import be.vdab.geld.repositories.MensRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,5 +21,8 @@ public class MensService {
     @Transactional
     public long create(Mens mens) {
         return mensRepository.create(mens);
+    }
+    public List<SchenkStatistiekPerMens> findSchenkStatistiekPerMens() {
+        return mensRepository.findSchenkStatistiekPerMens();
     }
 }

@@ -92,4 +92,16 @@ public class MensRepositoryTest extends AbstractTransactionalJUnit4SpringContext
                 .allSatisfy(geld -> assertThat(geld).isBetween(van, tot))
                 .isSorted();
     }
+    @Test
+    void findSchenkStatistiekPerMens() {
+        var statistiek = mensRepository.findSchenkStatistiekPerMens();
+        assertThat(statistiek).hasSize(super.jdbcTemplate.queryForObject(
+                "select count(distinct vanMensId) from schenkingen", Integer.class))
+                .extracting(statistiekRij -> statistiekRij.id()).isSorted();
+        var rij1 = statistiek.get(0);
+        assertThat(rij1.aantal()).isEqualTo(super.jdbcTemplate.queryForObject(
+                "select count(*) from schenkingen where vanMensId = " + rij1.id(), Integer.class));
+        assertThat(rij1.totaal()).isEqualTo(super.jdbcTemplate.queryForObject(
+                "select sum(bedrag) from schenkingen where vanMensId = " + rij1.id(), BigDecimal.class));
+    }
 }

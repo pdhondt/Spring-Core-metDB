@@ -9,6 +9,7 @@ import be.vdab.geld.services.SchenkingService;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.Scanner;
 
 @Component
@@ -31,7 +32,7 @@ public class MyRunner implements CommandLineRunner {
         mensService.findAll().forEach(mens ->
                 System.out.println(mens.getNaam() + ":" + mens.getGeld()));
     }*/
-    private final SchenkingService schenkingService;
+    /*private final SchenkingService schenkingService;
     public MyRunner(SchenkingService schenkingService) {
         this.schenkingService = schenkingService;
     }
@@ -55,5 +56,15 @@ public class MyRunner implements CommandLineRunner {
         } catch (OnvoldoendeGeldException ex) {
             System.err.println("Schenking mislukt.  Onvoldoende geld.");
         }
+    }*/
+    private final MensService mensService;
+    public MyRunner(MensService mensService) {
+        this.mensService = mensService;
+    }
+    @Override
+    public void run(String... args) {
+        mensService.findSchenkStatistiekPerMens().forEach(schenkStatistiekPerMens ->
+                System.out.println(schenkStatistiekPerMens.id() + ":" + schenkStatistiekPerMens.naam() + ":" +
+                        schenkStatistiekPerMens.aantal() + ":" + schenkStatistiekPerMens.totaal()));
     }
 }
